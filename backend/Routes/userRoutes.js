@@ -19,12 +19,22 @@ router.post("/", async (req, res) => {
 // ✅ Get all users
 router.get("/", async (req, res) => {
     try {
-        const users = await User.find();
+        console.log("🔍 Fetching users..."); // ✅ Debugging log
+
+        const users = await User.find().select("-password");
+        console.log("👥 Users found:", users);
+
+        if (!users.length) {
+            return res.status(404).json({ message: "No users found" });
+        }
+
         res.json(users);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error("❌ Error fetching users:", error);
+        res.status(500).json({ message: "Server error" });
     }
 });
+
 
 // ✅ Update user by ID
 router.put("/:id", async (req, res) => {
